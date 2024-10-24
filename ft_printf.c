@@ -6,7 +6,7 @@
 /*   By: snowflake <hrychkatetiana@gmail.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 23:13:06 by snowflake         #+#    #+#             */
-/*   Updated: 2024/09/20 11:09:15 by snowflake        ###   ########.fr       */
+/*   Updated: 2024/10/06 19:27:45 by snowflake        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,82 +14,131 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "libft.h"
-
-#include <stdarg.h>
-#include <stdlib.h>
-
-void    my_printf(const char* format, ...)
+// Modified my_printf function
+int my_printf(const char *format, ...)
 {
     va_list ptr;
+    int printed_char = 0;
 
     va_start(ptr, format);
-
     for (int i = 0; format[i] != '\0'; i++)
     {
-        if (format[i] == '%' && format[i + 1] != '\0')
+        if (format[i] == '%')
         {
-            i++; // Move to the specifier after '%'
-            switch (format[i])
+            i++;
+            if (format[i] == 'c')
             {
-                case 'c': {
-                    char c = (char) va_arg(ptr, int);
-                    ft_putchar(c);
-                    break;
-                }
-
-                case 's': {
-                    char *s = va_arg(ptr, char*);
-                    int j = 0;
-                    while (s[j] != '\0')
-                        ft_putchar(s[j++]);
-                    break;
-                }
-
-                case 'd': {
-                    int res = va_arg(ptr, int);
-                    ft_putnbr(res);
-                    break;
-                }
-
-                case 'x': {
-                    int n = va_arg(ptr, int);
-                    char *str = ft_decimal(n);  // Преобразуем число в шестнадцатеричный формат
-                    if (str) {
-                        ft_putstr(str);  // Выводим строку
-                        free(str);  // Освобождаем память
-                    }
-                    break;
-                }
-
-                case 'X': {
-                    int n = va_arg(ptr, int);
-                    char *str = ft_decimal(n);
-                    if(str) {
-                        ft_putstr(strtoupper(str));
-                        free(str);
-                    }
-                    break;
-                }
-
-                default: {
-                    ft_putchar(format[i]); // Handle unsupported format specifiers
-                    break;
-                }
+                char c = (char)va_arg(ptr, int);
+                ft_putchar(c);
+                printed_char++;
             }
-        } 
-        else 
+            else if (format[i] == 's')
+            {
+                char *str = va_arg(ptr, char *);
+                printed_char += ft_putstr(str);
+            }
+			else if ((format[i] == 'd') || (format[i] == 'i'))
+			{
+	        	int res = va_arg(ptr, int);
+	        	printed_char += ft_putnbr(res);
+			}
+			else if (format[i] == 'x')
+			{
+	        	int n = va_arg(ptr, int);
+		    	char *str = ft_decimal(n);  // Преобразуем число в шестнадцатеричный формат
+            	if (str) 
+				{
+					ft_putstr(str);  // Выводим строку
+               		free(str);
+				}
+			}
+			else if (format[i] == 'X')
+			{
+	           int n = va_arg(ptr, int);
+	           char *str = ft_decimal(n);
+	           if(str)
+			   {
+	               ft_putstr(strtoupper(str));
+	               free(str);
+            	}
+			}
+		}
+            // You can add more format specifiers here (e.g., %d, %x)
+        else
         {
             ft_putchar(format[i]); // Print regular characters
+            printed_char++; // Increment for printed character
         }
     }
-
     va_end(ptr);
+    return printed_char; // Return the total count of printed characters
 }
-
 
 int main()
 {
-	//printf("hello my name is %s and i'm %x years old\n", "Laura", 2562);
-    my_printf("hello my name is %s and i'm %X years old\n", "Laura", 2562);
-    return (0);
+	int c = 6565;
+    const char *name = "Laura";
+    
+    printf("hello my name is %s and I'm %x years old\n", name, c);
+    my_printf("hello my name is %s and I'm %x years old\n", name, c);
+    
+    return 0;
 }
+
+
+
+        //         case 'x': {
+        //             int n = va_arg(ptr, int);
+        //             char *str = ft_decimal(n);  // Преобразуем число в шестнадцатеричный формат
+        //             if (str) {
+        //                 ft_putstr(str);  // Выводим строку
+        //                 free(str);  // Освобождаем память
+        //             }
+        //             break;
+        //         }
+
+        //         case 'X': {
+        //             int n = va_arg(ptr, int);
+        //             char *str = ft_decimal(n);
+        //             if(str) {
+        //                 ft_putstr(strtoupper(str));
+        //                 free(str);
+        //             }
+        //             break;
+        //         }
+
+        //         case 'p': {
+        //             void* p = va_arg(ptr, void*);
+        //             printed_char += ft_putp(p);
+        //             break;
+        //         }
+
+        //         case 'i': {
+        //             int res = va_arg(ptr, int);
+        //             ft_putnbr(res);
+        //             break;                    
+        //         }
+
+        //         case 'u': {
+        //             unsigned int res = va_arg(ptr, unsigned int);
+        //             ft_putuns_number(res);
+        //             break; 
+        //         }
+
+        //         default: {
+        //             ft_putchar(format[i]); // Handle unsupported format specifiers
+        //             break;
+        //         }
+        //     }
+        // } 
+//         else 
+//         {
+//             ft_putchar(format[i]); // Print regular characters
+//         }
+//     }
+
+//     va_end(ptr);
+//     return (printed_char);
+// }
+
+
